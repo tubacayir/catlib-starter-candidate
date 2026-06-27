@@ -23,4 +23,9 @@ public class GlobalExceptionHandler {
                 .status(status)
                 .body(new ApiErrorResponse(status.value(), message, java.time.LocalDateTime.now()));
     }
+
+    @ExceptionHandler(StorageException.class)
+    public ResponseEntity<ApiErrorResponse> handleStorageException(StorageException exception) {
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
+    }
 }

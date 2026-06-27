@@ -5,7 +5,8 @@ public class CatResponse {
     private String tag;
     private String imageUrl;
 
-    public CatResponse() {}
+    public CatResponse() {
+    }
 
     public CatResponse(String tag, String imageUrl) {
         this.tag = tag;

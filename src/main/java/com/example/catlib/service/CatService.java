@@ -11,26 +11,25 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 
 @Service
 public class CatService {
 
     private static final String CATAAS_BASE_URL = "https://cataas.com";
+    private static final String CATAAS_API_NAME = "CATAAS";
 
-    private final HttpClient httpClient;
+    private final HttpClientService httpClientService;
     private final ObjectMapper objectMapper;
 
-    public CatService(HttpClient httpClient, ObjectMapper objectMapper) {
-        this.httpClient = httpClient;
+    public CatService(HttpClientService httpClientService, ObjectMapper objectMapper) {
+        this.httpClientService = httpClientService;
         this.objectMapper = objectMapper;
     }
 
     public CatResponse fetchCatByTag(String tag) {
-        String responseBody = sendGetRequest(buildCatUri(tag));
+        String responseBody = httpClientService.sendGetRequest(buildCatUri(tag), CATAAS_API_NAME);
         String catId = extractCatId(responseBody);
+
         return new CatResponse(tag, buildImageUrl(catId));
     }
 
@@ -38,38 +37,10 @@ public class CatService {
         return UriComponentsBuilder
                 .fromHttpUrl(CATAAS_BASE_URL)
                 .pathSegment("cat", tag)
-                .queryParam("json", "true")
+                .queryParam("json", true)
                 .build()
                 .encode()
                 .toUri();
-
-    }
-
-    private String sendGetRequest(URI uri) {
-        try {
-            HttpResponse<String> response = httpClient.send(buildGetRequest(uri), HttpResponse.BodyHandlers.ofString());
-            validateSuccessfulResponse(response);
-            return response.body();
-        } catch (IOException e) {
-            throw new ExternalApiException(ErrorMessages.CATAAS_RESPONSE_READ_FAILED, e);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new ExternalApiException(ErrorMessages.CATAAS_REQUEST_INTERRUPTED, e);
-        }
-    }
-
-    private HttpRequest buildGetRequest(URI uri) {
-        return HttpRequest.newBuilder()
-                .uri(uri)
-                .GET()
-                .build();
-
-    }
-
-    private void validateSuccessfulResponse(HttpResponse<String> response) {
-        if (response.statusCode() < 200 || response.statusCode() >= 300) {
-            throw new ExternalApiException(ErrorMessages.CATAAS_UNSUCCESSFUL_STATUS + response.statusCode());
-        }
     }
 
     private String extractCatId(String responseBody) {
