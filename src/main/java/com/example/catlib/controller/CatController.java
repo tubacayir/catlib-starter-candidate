@@ -21,8 +21,7 @@ public class CatController {
      * Example: GET /api/cat/space
      */
     @GetMapping("/cat/{tag}")
-    public ResponseEntity<CatResponse> getCatByTag(@PathVariable String tag) throws Exception {
-        CatResponse response = catService.fetchCatByTag(tag);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<CatResponse> getCatByTag(@PathVariable String tag) {
+        return ResponseEntity.ok(catService.fetchCatByTag(tag));
     }
 }
