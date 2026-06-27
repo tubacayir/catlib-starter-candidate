@@ -52,3 +52,67 @@ You can override defaults in `src/main/resources/application.properties` or via 
 - The CATAAS API is free and requires no authentication: https://cataas.com
 - Open Library API is free and requires no authentication: https://openlibrary.org/developers/api
 - Read the full task document before making any changes
+
+## Additional Endpoints
+
+### Store topic content
+
+Fetches a cat image from CATAAS and related book metadata from Open Library, stores the combined result locally as a JSON file, and returns the stored content.
+
+**Request**
+
+```http
+POST /api/topics/{topic}
+```
+
+Example:
+
+```text
+POST http://localhost:8080/api/topics/space
+```
+
+---
+
+### Get stored content summary
+
+Returns a summary of all topics stored so far.
+
+**Request**
+
+```http
+GET /api/topics/summary
+```
+
+Example:
+
+```text
+GET http://localhost:8080/api/topics/summary
+```
+
+## Local Storage
+
+The application stores each topic as a separate JSON file under the `storage` directory.
+
+Example:
+
+```text
+storage/
+├── space.json
+├── history.json
+└── java.json
+```
+
+## Running Tests
+
+```bash
+./mvnw test
+```
+
+## Design Notes
+
+* Controllers are kept thin; orchestration is handled by `TopicContentService`.
+* HTTP communication with external APIs is shared through `HttpClientService`.
+* External API errors are handled centrally using `GlobalExceptionHandler`.
+* Java records are used for immutable DTOs where appropriate.
+* Local storage uses JSON files, following the assignment requirements.
+* Unit tests are included for the orchestration logic in `TopicContentService`.
