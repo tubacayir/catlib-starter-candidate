@@ -33,6 +33,7 @@ Since the input is a free-form topic rather than a title, ISBN, or work ID, I co
 Because I have checked other endpoints of API, I recognized that the others was not checking each field of the book object. 
 I also decided to use Java records for the DTOs that are only used to transfer data. Since these objects are immutable and contain no logic, records make the models easier to read.
 To increase confidence in the implementation, I added unit tests for the managing logic in `TopicContentService`, covering both successful and failure scenarios. 
+I also limited book numbers with 5 because to prevent huge number of books.
 Finally, I followed a simple Git workflow while developing the solution. Firstly, I created a git repository and push the code to there in master branch.
 I created a separate feature branch from master branch for each task and merged the changes using pull requests. These pull request can be found in the Github.
 
